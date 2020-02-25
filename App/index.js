@@ -91,7 +91,7 @@ const App = () => {
       <StatusBar barStyle="light-content" />
       <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
       <TouchableOpacity onPress={start} style={styles.button}>
-        <Text style={styles.buttonText}>Start</Text>
+        <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
       </TouchableOpacity>
     </View>
   );

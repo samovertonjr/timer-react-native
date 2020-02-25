@@ -26,13 +26,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  button: {
-    borderWidth: 10,
-    borderColor: Colors.white,
+  buttonTimer: {
+    borderColor: '#68D391',
+    backgroundColor: '#68D391',
     color: Colors.white,
     width: screen.width / 2,
     height: screen.width / 2,
     borderRadius: screen.width / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  buttonReset: {
+    borderWidth: 10,
+    borderColor: '#E53E3E',
+    backgroundColor: '#E53E3E',
+    color: Colors.white,
+    width: screen.width / 2,
+    height: screen.width / 4,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 30,
@@ -56,12 +68,12 @@ const getRemaining = time => {
 };
 
 const App = () => {
-  const [remainingSeconds, setRemainingSeconds] = useState(90);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
   const {minutes, seconds} = getRemaining(remainingSeconds);
 
-  function start() {
+  function handleToggle() {
     setIsActive(!isActive);
   }
 
@@ -75,7 +87,7 @@ const App = () => {
 
     if (isActive) {
       interval = setInterval(() => {
-        setRemainingSeconds(remainingSeconds - 1);
+        setRemainingSeconds(remainingSeconds + 1);
       }, 1000);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
@@ -90,8 +102,12 @@ const App = () => {
     <View style={styles.body}>
       <StatusBar barStyle="light-content" />
       <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
-      <TouchableOpacity onPress={start} style={styles.button}>
+      <TouchableOpacity onPress={handleToggle} style={styles.buttonTimer}>
         <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={reset} style={styles.buttonReset}>
+        <Text style={styles.buttonText}>Reset</Text>
       </TouchableOpacity>
     </View>
   );

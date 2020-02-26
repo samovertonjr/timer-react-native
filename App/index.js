@@ -13,9 +13,11 @@ import {
   StatusBar,
   TouchableOpacity,
   Dimensions,
+  Picker,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import RenderPicker from '../components/RenderPicker';
 
 const screen = Dimensions.get('window');
 
@@ -26,31 +28,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonTimer: {
+  buttonSection: {
+    flexDirection: 'row',
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+    height: screen.width / 4,
+    width: screen.width / 4,
+  },
+  buttonStart: {
+    borderRadius: 100,
     borderColor: '#68D391',
     backgroundColor: '#68D391',
+  },
+  buttonPause: {
+    borderRadius: 100,
+    borderColor: '#ECC94B',
+    backgroundColor: '#ECC94B',
     color: Colors.white,
-    width: screen.width / 2,
-    height: screen.width / 2,
-    borderRadius: screen.width / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 30,
+    marginHorizontal: 12,
   },
   buttonReset: {
-    borderWidth: 10,
-    borderColor: '#E53E3E',
     backgroundColor: '#E53E3E',
-    color: Colors.white,
-    width: screen.width / 2,
-    height: screen.width / 4,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 30,
+    borderColor: '#E53E3E',
+    borderRadius: 100,
+    borderWidth: 10,
   },
   buttonText: {
-    fontSize: 45,
+    fontSize: 30,
     color: Colors.white,
   },
   timerText: {
@@ -68,17 +75,26 @@ const getRemaining = time => {
 };
 
 const App = () => {
-  const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(5);
   const [isActive, setIsActive] = useState(false);
+  const [selectedMinutes, setSelectedMinutes] = useState('0');
+  const [selectedSeconds, setSelectedSeconds] = useState('0');
 
   const {minutes, seconds} = getRemaining(remainingSeconds);
 
-  function handleToggle() {
-    setIsActive(!isActive);
+  function handleStart() {
+    setRemainingSeconds(
+      parseInt(selectedMinutes, 10) * 60 + parseInt(selectedSeconds, 10),
+    );
+    setIsActive(true);
   }
 
-  function reset() {
-    setRemainingSeconds(0);
+  function handlePause() {
+    setIsActive(false);
+  }
+
+  function handleReset() {
+    setRemainingSeconds(5);
     setIsActive(false);
   }
 
@@ -87,28 +103,54 @@ const App = () => {
 
     if (isActive) {
       interval = setInterval(() => {
-        setRemainingSeconds(remainingSeconds + 1);
+        setRemainingSeconds(remainingSeconds - 1);
       }, 1000);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
     }
 
+    if (remainingSeconds === 0) {
+      handleReset();
+    }
+
     return () => {
       clearInterval(interval);
     };
-  }, [isActive, remainingSeconds]);
+  }, [isActive, remainingSeconds, selectedMinutes, selectedSeconds]);
 
   return (
     <View style={styles.body}>
       <StatusBar barStyle="light-content" />
-      <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
-      <TouchableOpacity onPress={handleToggle} style={styles.buttonTimer}>
-        <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
-      </TouchableOpacity>
+      {isActive ? (
+        <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
+      ) : (
+        <RenderPicker
+          selectedMinutes={selectedMinutes}
+          setSelectedMinutes={setSelectedMinutes}
+          selectedSeconds={selectedSeconds}
+          setSelectedSeconds={setSelectedSeconds}
+        />
+      )}
 
-      <TouchableOpacity onPress={reset} style={styles.buttonReset}>
-        <Text style={styles.buttonText}>Reset</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonSection}>
+        <TouchableOpacity
+          onPress={handleStart}
+          style={[styles.button, styles.buttonStart]}>
+          <Text style={styles.buttonText}>Start</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePause}
+          style={[styles.button, styles.buttonPause]}>
+          <Text style={styles.buttonText}>Pause</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleReset}
+          style={[styles.button, styles.buttonReset]}>
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

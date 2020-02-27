@@ -13,7 +13,6 @@ import {
   StatusBar,
   TouchableOpacity,
   Dimensions,
-  Picker,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';

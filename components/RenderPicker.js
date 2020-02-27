@@ -40,7 +40,7 @@ const createArray = length => {
   }
   return arr;
 };
-const AVAILABLE_MINUTES = createArray(10);
+const AVAILABLE_MINUTES = createArray(60);
 const AVAILABLE_SECONDS = createArray(60);
 
 const RenderPicker = ({
